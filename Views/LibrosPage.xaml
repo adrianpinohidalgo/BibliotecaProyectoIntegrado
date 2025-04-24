@@ -1,0 +1,80 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BibliotecaProyectoIntegrado.ViewModels"
+             x:Class="BibliotecaProyectoIntegrado.Views.LibrosPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
+
+    <ContentPage.BindingContext>
+        <viewmodels:LibrosViewModel />
+    </ContentPage.BindingContext>
+
+    <VerticalStackLayout Spacing="20">
+
+        <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,20,20,0" VerticalOptions="Start">
+            <Frame Grid.Column="0"
+                HeightRequest="42" WidthRequest="42"
+                CornerRadius="100"
+                BackgroundColor="#FEF9EB"
+                BorderColor="Black"
+                Padding="5"
+                HasShadow="False"
+                VerticalOptions="Center">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding EditarLibroCommand}" />
+                </Frame.GestureRecognizers>
+                <Image Source="edit.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+            </Frame>
+
+            <!-- Título de la sección -->
+            <Label Grid.Column="1" Text="Book Details" FontSize="20" FontAttributes="Bold" TextColor="Black" Margin="0,5,0,0" HorizontalOptions="Center" />
+
+            <Frame Grid.Column="2"
+               HeightRequest="42" WidthRequest="42"
+               CornerRadius="100"
+               BackgroundColor="#FEF9EB"
+               BorderColor="Black"
+               Padding="5"
+               HasShadow="False"
+               VerticalOptions="Center">    
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding AgregarLibroCommand}" />
+                </Frame.GestureRecognizers>
+
+                <Image Source="add.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+            </Frame>
+
+        </Grid>
+        
+        <BoxView HeightRequest="2" Color="Black"/>
+
+        <!-- Carrusel de libros -->
+        <CarouselView ItemsSource="{Binding Libros}" Position="{Binding SelectedIndex, Mode=TwoWay}" Margin="20,0,20,0">
+            <CarouselView.ItemTemplate>
+                <DataTemplate>
+                    <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <!--<Image Source="{Binding Imagen}" HeightRequest="200" Aspect="AspectFill" />-->
+                        <Frame CornerRadius="20" Padding="20" BackgroundColor="#FEF9EB" Margin="10" BorderColor="Black" HeightRequest="400">
+                            <Image Source="dotnet_bot.png" HeightRequest="200" Aspect="AspectFill" />
+                        </Frame>
+                        
+                        <Label Text="{Binding Titulo}" FontSize="24" FontAttributes="Bold" TextColor="Black" HorizontalTextAlignment="Center" />
+                        <Label Text="{Binding Autor, StringFormat='by {0}'}" FontSize="14" TextColor="Gray" HorizontalTextAlignment="Center" />
+
+                        <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Center" Margin="0,10">
+                            <Button Text="{Binding Genero}"
+                                FontAttributes="Bold"
+                                TextColor="Black"
+                                BorderColor="Black" BorderWidth="2"
+                                CornerRadius="20" FontSize="13" Padding="25,5" BackgroundColor="White"/>
+                        </FlexLayout>
+
+                        <Label Text="{Binding Descripcion}" FontSize="14" TextColor="Black" HorizontalTextAlignment="Center" />
+
+                        <Label Text="{Binding Anio, StringFormat='Published in {0}'}" FontSize="12" TextColor="Gray" HorizontalTextAlignment="Center" Margin="0,10" />
+                    </VerticalStackLayout>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+    </VerticalStackLayout>
+</ContentPage>

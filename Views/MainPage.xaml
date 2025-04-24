@@ -1,0 +1,177 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:BibliotecaProyectoIntegrado.ViewModels"
+             x:Class="BibliotecaProyectoIntegrado.Views.MainPage"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="White">
+
+    <ContentPage.BindingContext>
+        <viewmodels:MainPageViewModel />
+    </ContentPage.BindingContext>
+
+    <Grid RowDefinitions="Auto, Auto, Auto, Auto, *, Auto"
+          Padding="0"
+          BackgroundColor="White"
+          RowSpacing="20">
+        <!-- Header -->
+        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" Padding="20,0,20,0">
+            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Padding="20,15,20,-10" VerticalOptions="Start">
+                <Image Source="profile.png"
+                   WidthRequest="60" HeightRequest="60"
+                   Aspect="AspectFill"
+                   Grid.Column="0"
+                   VerticalOptions="Center" />
+
+                <VerticalStackLayout Padding="10,5,0,0" Grid.Column="1" VerticalOptions="Center">
+                    <Label Text="Antony Santos" FontAttributes="Bold" FontSize="18" TextColor="Black" />
+                    <Label Text="Beginner Level" FontSize="14" TextColor="Gray" />
+                </VerticalStackLayout>
+
+                <Image Source="chat_icon.png" WidthRequest="28" HeightRequest="28"
+                   Grid.Column="2" VerticalOptions="Center" />
+
+                <Frame Grid.Column="3"
+                   HeightRequest="42" WidthRequest="42"
+                   CornerRadius="100"
+                   BackgroundColor="Transparent"
+                   BorderColor="Black"
+                   Padding="5"
+                   HasShadow="False"
+                   VerticalOptions="Center">
+                    <Image Source="settings.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                </Frame>
+            </Grid>
+        </Grid>
+
+        <BoxView Grid.Row="1" HeightRequest="2" Color="Black"/>
+
+        <!-- Search bar -->
+        <Frame Grid.Row="2" CornerRadius="100" Padding="10" BackgroundColor="White" HasShadow="False"
+               BorderColor="Black" Margin="20,0,20,10">
+            <SearchBar Margin="-10,0,20,0" Keyboard="Text" Placeholder="Search anything here..." PlaceholderColor="Black" TextColor="Black" FontAttributes="Bold"/>
+        </Frame>
+        
+
+        <!-- Genre filters -->
+        <ScrollView Grid.Row="3" Orientation="Horizontal" HeightRequest="40">
+            <HorizontalStackLayout Spacing="10" Padding="20,0,20,0">
+                <Button Text="All"
+                    Command="{Binding FilterCommand}"
+                    CommandParameter="All"
+                    FontAttributes="Bold"
+                    TextColor="Black"
+                    BorderColor="Black" BorderWidth="2"
+                    CornerRadius="20" FontSize="13" Padding="25,5" BackgroundColor="White">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                             Binding="{Binding SelectedGenre}"
+                             Value="All">
+                            <Setter Property="BackgroundColor" Value="Black"/>
+                            <Setter Property="TextColor" Value="White"/>
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Fiction"
+                    Command="{Binding FilterCommand}"
+                    CommandParameter="Fiction"
+                    FontAttributes="Bold"
+                    TextColor="Black"
+                    BorderColor="Black" BorderWidth="2"
+                    CornerRadius="20" FontSize="13" Padding="25,5" BackgroundColor="White">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                             Binding="{Binding SelectedGenre}"
+                             Value="Fiction">
+                            <Setter Property="BackgroundColor" Value="Black"/>
+                            <Setter Property="TextColor" Value="White"/>
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Fantasy"
+                     Command="{Binding FilterCommand}"
+                     CommandParameter="Fantasy"
+                     FontAttributes="Bold"
+                     TextColor="Black"
+                     BorderColor="Black" BorderWidth="2"
+                     CornerRadius="20" FontSize="13" Padding="25,5" BackgroundColor="White">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                              Binding="{Binding SelectedGenre}"
+                              Value="Fantasy">  
+                            <Setter Property="BackgroundColor" Value="Black"/>
+                            <Setter Property="TextColor" Value="White"/>
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+
+                <Button Text="Romance"
+                     Command="{Binding FilterCommand}"
+                     CommandParameter="Romance"
+                     FontAttributes="Bold"
+                     TextColor="Black"
+                     BorderColor="Black" BorderWidth="2"
+                     CornerRadius="20" FontSize="13" Padding="25,5" BackgroundColor="White">
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button"
+                              Binding="{Binding SelectedGenre}"
+                              Value="Romance">  
+                            <Setter Property="BackgroundColor" Value="Black"/>
+                            <Setter Property="TextColor" Value="White"/>
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
+            </HorizontalStackLayout>
+        </ScrollView>
+
+        <!-- Section title
+        <Grid ColumnDefinitions="*,Auto" Margin="20,20,20,0">
+            <Label Text="Continue Reading" FontAttributes="Bold" FontSize="16" Grid.Column="0" />
+            <Label Text="See All" TextColor="#4CAF50" FontSize="14"
+                   VerticalOptions="Center" Grid.Column="1" />
+        </Grid> -->
+
+        <!-- Book list -->
+            <CollectionView Grid.Row="4" ItemsSource="{Binding FilteredBooks}" SelectionMode="Single" Margin="20,0,20,0">
+                <CollectionView.ItemsLayout>
+                    <GridItemsLayout Orientation="Vertical" Span="2" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame CornerRadius="20"
+                               BorderColor="Black"
+                               HasShadow="False"
+                               Padding="5"
+                               Margin="5"
+                               BackgroundColor="White">
+                            <VerticalStackLayout Spacing="5">
+                                <!-- <Image Source="{Binding Imagen}" HeightRequest="140" Aspect="AspectFill"
+                                       Margin="0,0,0,5" /> -->
+                                <Frame CornerRadius="20"
+                                   BorderColor="Gray"
+                                    HeightRequest="150">
+                                    <Image Source="dotnet_bot.png" HeightRequest="140" Aspect="AspectFit" Margin="0,0,0,5" />
+                                </Frame>
+                                <Label Text="{Binding Titulo}" FontAttributes="Bold"
+                                       FontSize="18" LineBreakMode="TailTruncation" TextColor="Black" Padding="10,10,0,0" />
+                                <Label Text="{Binding Autor, StringFormat='by {0}'}"
+                                       FontSize="12" TextColor="#999999"  Padding="10,0,0,10" />
+                            </VerticalStackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        <!-- Return button -->
+        <Button Grid.Row="5" Text="Volver a Welcome"
+                Clicked="OnResetWelcomeClicked"
+                BackgroundColor="#F5F5F5"
+                TextColor="Black"
+                BorderColor="#CCCCCC"
+                CornerRadius="25"
+                FontSize="13"
+                Margin="0,10"
+                Padding="12,6"/>
+    </Grid>
+</ContentPage>

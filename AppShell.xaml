@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="BibliotecaProyectoIntegrado.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:BibliotecaProyectoIntegrado.Views"
+    Shell.FlyoutBehavior="Disabled"
+    Title="Gedebook"
+    Shell.TabBarBackgroundColor="#7EBB94"
+    Shell.TabBarForegroundColor="Black"
+    Shell.TabBarTitleColor="Black"
+    Shell.TabBarUnselectedColor="White"
+    Shell.NavBarIsVisible="False">
+
+    <TabBar>
+        <ShellContent
+            Title="Inicio"
+            Icon="home.png"
+            ContentTemplate="{DataTemplate views:MainPage}"
+            Route="MainPage" />
+        <ShellContent
+            Title="Libros"
+            Icon="books.png"
+            ContentTemplate="{DataTemplate views:LibrosPage}"
+            Route="LibrosPage" />
+        <ShellContent
+            Title="Préstamos"
+            Icon="loan.png"
+            ContentTemplate="{DataTemplate views:PrestamosPage}"
+            Route="PrestamosPage" />
+
+
+        <ShellContent
+            Title="Inventario"
+            Icon="inventory.png"
+            ContentTemplate="{DataTemplate views:InventarioPage}"
+            Route="InventarioPage" />
+    </TabBar>
+</Shell>

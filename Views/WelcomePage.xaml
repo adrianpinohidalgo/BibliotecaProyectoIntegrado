@@ -1,0 +1,63 @@
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BibliotecaProyectoIntegrado.Views.WelcomePage"
+             BackgroundColor="#FFFFFF"
+             NavigationPage.HasNavigationBar="False">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="50" VerticalOptions="Center">
+
+            <VerticalStackLayout>
+                <!-- Nombre de la app -->
+                <Label Text="Gedebook."
+                       FontSize="48"
+                       FontAttributes="Bold"
+                       TextColor="#85BA94"
+                       HorizontalOptions="Center" />
+                <!-- Subtitulo -->
+                <Label Text="Tu aplicación de gestión de libros!"
+                       FontSize="16"
+                       FontAttributes="None"
+                       TextColor="Gray"
+                       HorizontalOptions="Center" />
+            </VerticalStackLayout>
+
+            <!-- Ilustración principal -->
+            <Image Source="welcome.png"
+                   HeightRequest="250"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Center" />
+
+            <VerticalStackLayout>
+                <!-- Título grande -->
+                <Label Text="Discover Thousands of Books"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="Black"
+                       HorizontalOptions="Center" />
+
+                <!-- Descripción -->
+                <Label Text="Explore a vast library of e-books across genres—ready to read anytime, anywhere."
+                       FontSize="14"
+                       TextColor="DarkGray"
+                       HorizontalOptions="Center"
+                       HorizontalTextAlignment="Center" />
+            </VerticalStackLayout>
+
+            <!-- Botón -->
+            <Button Text="Get Started"
+                    FontSize="20"
+                    BackgroundColor="#85BA94"
+                    TextColor="White"
+                    CornerRadius="100"
+                    FontAttributes="Bold"
+                    HeightRequest="60"
+                    Padding="20,0"
+                    Clicked="OnGetStartedClicked"
+                    HorizontalOptions="Center"
+                    WidthRequest="200"
+                    BorderColor="Black"/>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
