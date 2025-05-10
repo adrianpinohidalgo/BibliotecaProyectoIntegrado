@@ -13,6 +13,7 @@
 
         <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,20,20,0" VerticalOptions="Start">
             <Frame Grid.Column="0"
+                   IsVisible="{Binding EsAdmin}"
                 HeightRequest="42" WidthRequest="42"
                 CornerRadius="100"
                 BackgroundColor="#FEF9EB"
@@ -30,6 +31,7 @@
             <Label Grid.Column="1" Text="Book Details" FontSize="20" FontAttributes="Bold" TextColor="Black" Margin="0,5,0,0" HorizontalOptions="Center" />
 
             <Frame Grid.Column="2"
+                   IsVisible="{Binding EsAdmin}"
                HeightRequest="42" WidthRequest="42"
                CornerRadius="100"
                BackgroundColor="#FEF9EB"

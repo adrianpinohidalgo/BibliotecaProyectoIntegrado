@@ -1,144 +1,65 @@
 ﻿using BibliotecaProyectoIntegrado.Models;
 using BibliotecaProyectoIntegrado.Services;
+using BibliotecaProyectoIntegrado.ViewModels;
+using CommunityToolkit.Mvvm.Messaging;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 
-namespace BibliotecaProyectoIntegrado.ViewModels;
-
-public class PrestamosViewModel : BaseViewModel
+namespace BibliotecaProyectoIntegrado.ViewModels
 {
-    public ObservableCollection<PrestamoExtendido> PrestamosActivos { get; set; } = new();
-    public ObservableCollection<PrestamoExtendido> PrestamosVencidos { get; set; } = new();
-
-    public ObservableCollection<Libro> LibrosDisponibles { get; set; } = new();
-    public ObservableCollection<Usuario> Usuarios { get; set; } = new();
-
-    private Libro _libroSeleccionado;
-    public Libro LibroSeleccionado
+    public class PrestamosViewModel : BaseViewModel
     {
-        get => _libroSeleccionado;
-        set => SetProperty(ref _libroSeleccionado, value);
-    }
+        public ObservableCollection<PrestamoExtendido> Prestamos { get; set; } = new();
 
-    private Usuario _usuarioSeleccionado;
-    public Usuario UsuarioSeleccionado
-    {
-        get => _usuarioSeleccionado;
-        set => SetProperty(ref _usuarioSeleccionado, value);
-    }
+        public ICommand DevolverCommand { get; }
 
-
-    public ICommand FinalizarPrestamoCommand { get; }
-    public ICommand RenovarPrestamoCommand { get; }
-    public ICommand RegistrarPrestamoCommand { get; }
-
-    public PrestamosViewModel()
-    {
-        FinalizarPrestamoCommand = new Command<PrestamoExtendido>(async (prestamo) =>
+        public PrestamosViewModel()
         {
-            prestamo.FechaDevolucion = DateTime.Now;
-            await DatabaseService.UpdatePrestamoAsync(prestamo);
-            await CargarPrestamosAsync();
-        });
+            DevolverCommand = new Command<PrestamoExtendido>(async (prestamo) => await DevolverPrestamoAsync(prestamo));
+            WeakReferenceMessenger.Default.Register<LibroActualizadoMessage>(this, (r, m) => LoadPrestamos());
+            LoadPrestamos();
+        }
 
-        RenovarPrestamoCommand = new Command<PrestamoExtendido>(async (prestamo) =>
+
+        private async void LoadPrestamos()
         {
-            prestamo.FechaPrestamo = DateTime.Now;
-            await DatabaseService.UpdatePrestamoAsync(prestamo);
-            await CargarPrestamosAsync();
-        });
+            int usuarioId = Preferences.Get("UsuarioId", 0);
+            var prestamosActivos = await DatabaseService.GetPrestamosExtendidosDelUsuarioAsync(usuarioId);
+            Prestamos = new ObservableCollection<PrestamoExtendido>(prestamosActivos);
+            OnPropertyChanged(nameof(Prestamos));
+        }
 
-        RegistrarPrestamoCommand = new Command(async () => await RegistrarPrestamoAsync());
-
-        Task.Run(CargarPrestamosAsync);
-        Task.Run(CargarDatosAsync);
-    }
-
-    public async Task CargarPrestamosAsync()
-    {
-        var prestamos = await DatabaseService.GetPrestamosExtendidosAsync();
-        var ahora = DateTime.Now;
-
-        var activos = prestamos.Where(p => p.FechaDevolucion == null && p.FechaPrestamo.AddDays(14) >= ahora);
-        var vencidos = prestamos.Where(p => p.FechaDevolucion == null && p.FechaPrestamo.AddDays(14) < ahora);
-
-        MainThread.BeginInvokeOnMainThread(() =>
+        private async Task DevolverPrestamoAsync(PrestamoExtendido prestamoExtendido)
         {
-            PrestamosActivos.Clear();
-            PrestamosVencidos.Clear();
-
-            foreach (var p in activos)
-                PrestamosActivos.Add(p);
-
-            foreach (var p in vencidos)
-                PrestamosVencidos.Add(p);
-        });
-    }
-
-    public async Task CargarDatosAsync()
-    {
-        var libros = await DatabaseService.GetLibrosDisponiblesAsync(); // Ahora lo creamos
-        var usuarios = await DatabaseService.GetUsuariosAsync();
-
-        MainThread.BeginInvokeOnMainThread(() =>
-        {
-            LibrosDisponibles.Clear();
-            foreach (var libro in libros)
-                LibrosDisponibles.Add(libro);
-
-            Usuarios.Clear();
-            foreach (var usuario in usuarios)
-                Usuarios.Add(usuario);
-        });
-    }
-
-
-    public async Task RegistrarPrestamoAsync()
-    {
-        try
-        {
-            var libros = await DatabaseService.GetLibrosDisponiblesAsync();
-
-            if (libros.Count == 0)
+            // Crea un objeto Prestamo "normal"
+            var prestamo = new Prestamo
             {
-                await Application.Current.MainPage.DisplayAlert("Aviso", "No hay libros disponibles.", "OK");
-                return;
+                Id = prestamoExtendido.Id,
+                LibroId = prestamoExtendido.LibroId,
+                UsuarioId = prestamoExtendido.UsuarioId,
+                FechaPrestamo = prestamoExtendido.FechaPrestamo,
+                FechaDevolucion = DateTime.Now
+            };
+
+            await DatabaseService.UpdatePrestamoAsync(prestamo);
+
+            var inventario = await DatabaseService.GetInventarioPorLibroAsync(prestamo.LibroId);
+            if (inventario != null)
+            {
+                inventario.Status = "Disponible";
+                await DatabaseService.UpdateInventarioAsync(inventario);
             }
 
-            // Mostrar los títulos de los libros disponibles
-            var titulos = libros.Select(l => l.Titulo).ToArray();
-            string tituloSeleccionado = await Application.Current.MainPage.DisplayActionSheet(
-                "Selecciona un libro", "Cancelar", null, titulos);
+            await Application.Current.MainPage.DisplayAlert("Devolución", $"Has devuelto '{prestamoExtendido.Libro?.Titulo}'.", "OK");
 
-            if (string.IsNullOrEmpty(tituloSeleccionado) || tituloSeleccionado == "Cancelar")
-                return;
+            WeakReferenceMessenger.Default.Send(new LibroActualizadoMessage(prestamoExtendido.Libro));
 
-            var libroSeleccionado = libros.FirstOrDefault(l => l.Titulo == tituloSeleccionado);
-            if (libroSeleccionado == null)
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "No se encontró el libro seleccionado.", "OK");
-                return;
-            }
-
-            int usuarioIdFijo = 1; // ← o el usuario logueado
-            await DatabaseService.RegistrarPrestamoAsync(libroSeleccionado.Id, usuarioIdFijo);
-            await CargarPrestamosAsync();
-
-            var fechaDevolucion = DateTime.Now.AddDays(14).ToString("dd/MM/yyyy");
-
-            await Application.Current.MainPage.DisplayAlert(
-                "Éxito",
-                $"Préstamo de '{libroSeleccionado.Titulo}' registrado.\nFecha de devolución: {fechaDevolucion}",
-                "OK");
+            LoadPrestamos();
         }
-        catch (Exception ex)
-        {
-            await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
-        }
+
     }
-
-
 }
+
 
 // ✅ Asegúrate de poner esta clase **fuera** del ViewModel, pero en el mismo archivo o en otro si prefieres
 public class PrestamoExtendido : Prestamo

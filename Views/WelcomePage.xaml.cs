@@ -13,6 +13,7 @@ public partial class WelcomePage : ContentPage
         Preferences.Set("IsFirstLaunch", false);
 
         // Cambia la MainPage a AppShell para mostrar la navegación con tabs
-        Application.Current.MainPage = new AppShell();
+        Application.Current.MainPage = new LoginPage();
+        //await Navigation.PushAsync(new LoginPage());
     }
 }

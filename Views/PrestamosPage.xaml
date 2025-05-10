@@ -2,11 +2,13 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:BibliotecaProyectoIntegrado.ViewModels"
              x:Class="BibliotecaProyectoIntegrado.Views.PrestamosPage"
-             Title="Préstamos">
+             BackgroundColor="White"
+             x:Name="PrestamosPageView">
 
     <ContentPage.BindingContext>
         <viewmodels:PrestamosViewModel />
     </ContentPage.BindingContext>
+
 
     <VerticalStackLayout Spacing="20">
 
@@ -14,12 +16,12 @@
             <Frame Grid.Column="0"
             HeightRequest="42" WidthRequest="42"
             CornerRadius="100"
-            BackgroundColor="#FEF9EB"
-            BorderColor="Black"
+            BackgroundColor="White"
+            BorderColor="White"
             Padding="5"
             HasShadow="False"
             VerticalOptions="Center">
-                <Image Source="settings.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                <Image Source="pe.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
             </Frame>
 
             <!-- Título de la sección -->
@@ -28,55 +30,38 @@
             <Frame Grid.Column="2"
            HeightRequest="42" WidthRequest="42"
            CornerRadius="100"
-           BackgroundColor="#FEF9EB"
-           BorderColor="Black"
+           BackgroundColor="White"
+           BorderColor="White"
            Padding="5"
            HasShadow="False"
            VerticalOptions="Center">
-                <Image Source="settings.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                <Image Source="pep.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
             </Frame>
         </Grid>
 
         <BoxView HeightRequest="2" Color="Black"/>
-        <Label Text="Préstamos Activos" FontSize="18" FontAttributes="Bold" Margin="0,10,0,5" />
 
-        <CollectionView ItemsSource="{Binding PrestamosActivos}">
+        <CollectionView ItemsSource="{Binding Prestamos}" Margin="20,0,20,0">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame BorderColor="Gray" CornerRadius="10" Padding="10" Margin="0,5">
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="{Binding Libro.Titulo}" FontAttributes="Bold" />
-                            <Label Text="{Binding Usuario.Nombre}" FontSize="13" />
-                            <Label Text="{Binding FechaPrestamo, StringFormat='Prestado el: {0:dd/MM/yyyy}'}" FontSize="12" />
-                            <Label Text="{Binding FechaDevolucion, StringFormat='Vence el {0:dd/MM/yyyy}'}" FontSize="Small" TextColor="Red"/>
-
-                            <HorizontalStackLayout Spacing="10" Margin="0,5">
-                                <Button Text="Renovar" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PrestamosViewModel}}, Path=RenovarCommand}" CommandParameter="{Binding .}" />
-                                <Button Text="Finalizar" Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:PrestamosViewModel}}, Path=FinalizarCommand}" CommandParameter="{Binding .}" BackgroundColor="Red" TextColor="White" />
-                            </HorizontalStackLayout>
+                    <Frame BorderColor="Black" CornerRadius="15" Padding="10" Margin="5">
+                        <VerticalStackLayout>
+                            <Label Text="{Binding Libro.Titulo}" FontAttributes="Bold" FontSize="16" />
+                            <Label Text="{Binding Libro.Autor, StringFormat='Autor: {0}'}" FontSize="14" />
+                            <Label Text="{Binding FechaPrestamo, StringFormat='Prestado el {0:dd/MM/yyyy}'}" FontSize="12" TextColor="Gray"/>
+                            <Button Text="Devolver"
+                            Command="{Binding BindingContext.DevolverCommand, Source={x:Reference Name=PrestamosPageView}}"
+                            CommandParameter="{Binding .}"
+                            BackgroundColor="#FFCDD2"
+                            TextColor="Black"
+                            CornerRadius="10"
+                            Margin="0,10,0,0"/>
                         </VerticalStackLayout>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Label Text="Préstamos Vencidos" FontSize="18" FontAttributes="Bold" Margin="0,20,0,5" />
 
-        <CollectionView ItemsSource="{Binding PrestamosVencidos}">
-            <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame BorderColor="DarkRed" CornerRadius="10" Padding="10" Margin="0,5" BackgroundColor="#FFEBEE">
-                        <VerticalStackLayout Spacing="4">
-                            <Label Text="{Binding Libro.Titulo}" FontAttributes="Bold" TextColor="DarkRed"/>
-                            <Label Text="{Binding Usuario.Nombre}" FontSize="13" />
-                            <Label Text="{Binding FechaPrestamo, StringFormat='Prestado el: {0:dd/MM/yyyy}'}" FontSize="12" />
-                            <Label Text="{Binding FechaDevolucion, StringFormat='Vence el {0:dd/MM/yyyy}'}" FontSize="Small" TextColor="Red"/>
-                        </VerticalStackLayout>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <Button Text="Registrar nuevo préstamo" Command="{Binding RegistrarPrestamoCommand}" Margin="0,20,0,0" />
     </VerticalStackLayout>
 </ContentPage>

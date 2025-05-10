@@ -13,10 +13,15 @@ namespace BibliotecaProyectoIntegrado
             {
                 MainPage = new NavigationPage(new WelcomePage());
             }
-            else
+            else if (Preferences.Get("IsLoggedIn", false))
             {
                 MainPage = new AppShell();
             }
+            else
+            {
+                MainPage = new NavigationPage(new LoginPage());
+            }
+
         }
     }
 }

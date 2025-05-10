@@ -28,12 +28,5 @@
             Icon="loan.png"
             ContentTemplate="{DataTemplate views:PrestamosPage}"
             Route="PrestamosPage" />
-
-
-        <ShellContent
-            Title="Inventario"
-            Icon="inventory.png"
-            ContentTemplate="{DataTemplate views:InventarioPage}"
-            Route="InventarioPage" />
     </TabBar>
 </Shell>

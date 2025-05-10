@@ -63,8 +63,23 @@ namespace BibliotecaProyectoIntegrado.Services
                     }
                 }
 
-            
-                await _database.InsertAsync(new Usuario { Nombre = "Adrian Pino", Email = "adrian@gmail.com", NumeroSocio = "U001" });
+
+                await _database.InsertAsync(new Usuario
+                {
+                    Nombre = "Adrian Pino",
+                    Email = "adrian@gmail.com",
+                    NumeroSocio = "U001",
+                    Contrasena = "1234" // CONTRASEÑA DE EJEMPLO
+                });
+
+                await _database.InsertAsync(new Usuario
+                {
+                    Nombre = "Pepe Lopez",
+                    Email = "pepe@gmail.com",
+                    NumeroSocio = "U002",
+                    Contrasena = "1234" // CONTRASEÑA DE EJEMPLO
+                });
+
 
                 Preferences.Set("IsDbInitialized", true);
             }
@@ -81,13 +96,11 @@ namespace BibliotecaProyectoIntegrado.Services
         public static Task<int> GetActiveLoansCountAsync() =>
             _database.Table<Prestamo>().Where(l => l.FechaDevolucion == null).CountAsync();
 
-        public static async Task<List<PrestamoExtendido>> GetPrestamosExtendidosAsync()
+        public static async Task<List<PrestamoExtendido>> GetPrestamosExtendidosDelUsuarioAsync(int usuarioId)
         {
-            var todosLosPrestamos = await _database.Table<Prestamo>().ToListAsync();
-
-            var prestamos = todosLosPrestamos
-                .Where(p => p.FechaDevolucion == null || p.FechaPrestamo.AddDays(15) < DateTime.Now)
-                .ToList();
+            var prestamos = await _database.Table<Prestamo>()
+                .Where(p => p.UsuarioId == usuarioId && p.FechaDevolucion == null)
+                .ToListAsync();
 
             var extendidos = new List<PrestamoExtendido>();
             foreach (var p in prestamos)
@@ -109,6 +122,8 @@ namespace BibliotecaProyectoIntegrado.Services
 
             return extendidos;
         }
+
+
 
         public static Task UpdatePrestamoAsync(Prestamo p) => _database.UpdateAsync(p);
 
@@ -153,27 +168,118 @@ namespace BibliotecaProyectoIntegrado.Services
 
         public static Task<List<Usuario>> GetUsuariosAsync() => _database.Table<Usuario>().ToListAsync();
 
-        public static async Task<List<InventarioExtendido>> GetInventarioExtendidoAsync()
+        //USUARIOS
+        public static async Task<Usuario?> LoginAsync(string email, string contrasena)
         {
-            var inventario = await _database.Table<Inventario>().ToListAsync();
-            var resultado = new List<InventarioExtendido>();
+            return await _database.Table<Usuario>()
+                .Where(u => u.Email == email && u.Contrasena == contrasena)
+                .FirstOrDefaultAsync();
+        }
 
-            foreach (var item in inventario)
+        public static Task<List<Prestamo>> GetPrestamosDelUsuarioAsync(int usuarioId)
+        {
+            return _database.Table<Prestamo>()
+                .Where(p => p.UsuarioId == usuarioId && p.FechaDevolucion == null)
+                .ToListAsync();
+        }
+
+
+        public static Task<Inventario?> GetInventarioPorLibroAsync(int libroId)
+        {
+            return _database.Table<Inventario>()
+                .Where(i => i.LibroId == libroId && i.Status == "Prestado")
+                .FirstOrDefaultAsync();
+        }
+
+        public static async Task<string> GetEstadoInventarioAsync(int libroId)
+        {
+            var inventarios = await _database.Table<Inventario>()
+                .Where(i => i.LibroId == libroId)
+                .ToListAsync();
+
+            if (inventarios.Any())
             {
-                var libro = await _database.Table<Libro>().Where(l => l.Id == item.LibroId).FirstOrDefaultAsync();
-                if (libro != null)
-                {
-                    resultado.Add(new InventarioExtendido
-                    {
-                        InventarioId = item.Id,
-                        Libro = libro,
-                        Status = item.Status
-                    });
-                }
+                int total = inventarios.Count;
+                int disponibles = inventarios.Count(i => i.Status == "Disponible");
+                return $"{disponibles} disponibles de {total}";
             }
 
-            return resultado;
+            return "0 disponibles de 0";
         }
+
+        public static async Task<bool> UpdateInventarioAsync(Inventario inventario)
+        {
+            try
+            {
+                // Aquí usamos una consulta SQL directa para evitar problemas de serialización
+                string query = $"UPDATE Inventario SET Status = ? WHERE Id = ?";
+                int result = await _database.ExecuteAsync(query, inventario.Status, inventario.Id);
+                return result > 0;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error en UpdateInventarioAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        public static async Task<Inventario> GetInventarioByIdAsync(int inventarioId)
+        {
+            try
+            {
+                return await _database.Table<Inventario>()
+                    .Where(i => i.Id == inventarioId)
+                    .FirstOrDefaultAsync();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error en GetInventarioByIdAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+
+        public static async Task<List<InventarioExtendido>> GetInventarioExtendidoAsync()
+        {
+            try
+            {
+                var resultado = new List<InventarioExtendido>();
+                var libros = await _database.Table<Libro>().ToListAsync();
+
+                foreach (var libro in libros)
+                {
+                    var inventarios = await _database.Table<Inventario>()
+                        .Where(i => i.LibroId == libro.Id)
+                        .ToListAsync();
+
+                    bool algunoPrestado = inventarios.Any(i => i.Status == "Prestado");
+
+                    resultado.Add(new InventarioExtendido
+                    {
+                        InventarioId = inventarios.FirstOrDefault()?.Id ?? 0,
+                        Libro = libro,
+                        Status = algunoPrestado ? "Prestado" : "Disponible"
+                    });
+                }
+
+                return resultado;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error en GetInventarioExtendidoAsync: {ex.Message}");
+                throw;
+            }
+        }
+
+        public static async Task<bool> HayEjemplaresPrestadosAsync(int libroId)
+        {
+            var inventarios = await _database.Table<Inventario>()
+                .Where(i => i.LibroId == libroId)
+                .ToListAsync();
+
+            return inventarios.Any(i => i.Status == "Prestado");
+        }
+
 
     }
 }

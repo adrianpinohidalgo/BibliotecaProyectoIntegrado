@@ -2,6 +2,8 @@
 using System.Windows.Input;
 using BibliotecaProyectoIntegrado.Models;
 using BibliotecaProyectoIntegrado.Services;
+using BibliotecaProyectoIntegrado.Views;
+using CommunityToolkit.Mvvm.Messaging;
 
 namespace BibliotecaProyectoIntegrado.ViewModels
 {
@@ -11,12 +13,22 @@ namespace BibliotecaProyectoIntegrado.ViewModels
         public ICommand AgregarLibroCommand { get; }
         public ICommand EditarLibroCommand { get; }
 
+        public bool EsAdmin { get; set; }
 
         public LibrosViewModel()
         {
             _ = LoadLibrosAsync();
-            AgregarLibroCommand = new Command(async () => await AgregarLibroAsync());
+            AgregarLibroCommand = new Command(async () =>
+            {
+                await Shell.Current.GoToAsync(nameof(LibroFormPage));
+
+            }); 
             EditarLibroCommand = new Command(async () => await EditarLibroAsync());
+            WeakReferenceMessenger.Default.Register<LibroActualizadoMessage>(this, async (r, m) =>
+            {
+                await LoadLibrosAsync();
+            });
+
         }
 
         private int _selectedIndex;
@@ -41,6 +53,10 @@ namespace BibliotecaProyectoIntegrado.ViewModels
             var libros = await DatabaseService.GetBooksAsync();
             Libros = new ObservableCollection<Libro>(libros);
             OnPropertyChanged(nameof(Libros));
+            var userId = Preferences.Get("UsuarioId", 0);
+            var usuario = (await DatabaseService.GetUsuariosAsync()).FirstOrDefault(u => u.Id == userId);
+            EsAdmin = usuario?.NumeroSocio == "U001";
+            OnPropertyChanged(nameof(EsAdmin));
         }
 
         private async Task AgregarLibroAsync()
@@ -79,29 +95,15 @@ namespace BibliotecaProyectoIntegrado.ViewModels
 
             var libroSeleccionado = Libros[SelectedIndex];
 
-            string nuevoTitulo = await Application.Current.MainPage.DisplayPromptAsync("Editar libro", "Nuevo título:", initialValue: libroSeleccionado.Titulo);
-            if (string.IsNullOrWhiteSpace(nuevoTitulo)) return;
+            var navParams = new Dictionary<string, object>
+    {
+        { "Libro", libroSeleccionado }
+    };
 
-            string nuevoAutor = await Application.Current.MainPage.DisplayPromptAsync("Editar libro", "Nuevo autor:", initialValue: libroSeleccionado.Autor);
-            if (string.IsNullOrWhiteSpace(nuevoAutor)) return;
-
-            string nuevoGenero = await Application.Current.MainPage.DisplayPromptAsync("Editar libro", "Nuevo género:", initialValue: libroSeleccionado.Genero);
-            string nuevoISBN = await Application.Current.MainPage.DisplayPromptAsync("Editar libro", "Nuevo ISBN:", initialValue: libroSeleccionado.ISBN);
-            string nuevoAnioStr = await Application.Current.MainPage.DisplayPromptAsync("Editar libro", "Nuevo año:", initialValue: libroSeleccionado.Anio.ToString());
-            int.TryParse(nuevoAnioStr, out int nuevoAnio);
-
-            libroSeleccionado.Titulo = nuevoTitulo;
-            libroSeleccionado.Autor = nuevoAutor;
-            libroSeleccionado.Genero = nuevoGenero;
-            libroSeleccionado.ISBN = nuevoISBN;
-            libroSeleccionado.Anio = nuevoAnio;
-
-            string dbPath = Path.Combine(FileSystem.AppDataDirectory, "biblioteca.db");
-            await DatabaseService.InitAsync(dbPath);
-            await DatabaseService.UpdateBooksAsync(libroSeleccionado);
-
-            await LoadLibrosAsync();
+            await Shell.Current.GoToAsync(nameof(LibroFormPage), navParams);
         }
+
+
     }
 
 }

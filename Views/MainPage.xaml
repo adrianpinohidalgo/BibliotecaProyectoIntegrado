@@ -3,7 +3,8 @@
              xmlns:viewmodels="clr-namespace:BibliotecaProyectoIntegrado.ViewModels"
              x:Class="BibliotecaProyectoIntegrado.Views.MainPage"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="White">
+             BackgroundColor="White"
+             x:Name="MainPageView">
 
     <ContentPage.BindingContext>
         <viewmodels:MainPageViewModel />
@@ -14,41 +15,67 @@
           BackgroundColor="White"
           RowSpacing="20">
         <!-- Header -->
-        <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,Auto" Padding="20,0,20,0">
-            <Grid ColumnDefinitions="Auto,*,Auto,Auto" Padding="20,15,20,-10" VerticalOptions="Start">
-                <Image Source="profile.png"
-                   WidthRequest="60" HeightRequest="60"
-                   Aspect="AspectFill"
-                   Grid.Column="0"
-                   VerticalOptions="Center" />
+        <Grid Grid.Row="0"
+      ColumnDefinitions="Auto,*,Auto,Auto"
+      Padding="20,10,20,-7"
+      VerticalOptions="Start">
 
-                <VerticalStackLayout Padding="10,5,0,0" Grid.Column="1" VerticalOptions="Center">
-                    <Label Text="Antony Santos" FontAttributes="Bold" FontSize="18" TextColor="Black" />
-                    <Label Text="Beginner Level" FontSize="14" TextColor="Gray" />
-                </VerticalStackLayout>
+            <!-- Imagen de perfil -->
+            <Image Source="profile.png"
+           WidthRequest="60" HeightRequest="60"
+           Aspect="AspectFill"
+           Grid.Column="0"
+           VerticalOptions="Center" />
 
-                <Image Source="chat_icon.png" WidthRequest="28" HeightRequest="28"
-                   Grid.Column="2" VerticalOptions="Center" />
+            <!-- Nombre y correo -->
+            <VerticalStackLayout Grid.Column="1"
+                         Padding="10,0,0,0"
+                         VerticalOptions="Center">
+                <Label Text="{Binding NombreUsuario}" FontAttributes="Bold" FontSize="18" TextColor="Black" />
+                <Label Text="{Binding EmailUsuario}" FontSize="14" TextColor="Gray" />
+            </VerticalStackLayout>
 
-                <Frame Grid.Column="3"
-                   HeightRequest="42" WidthRequest="42"
-                   CornerRadius="100"
-                   BackgroundColor="Transparent"
-                   BorderColor="Black"
-                   Padding="5"
-                   HasShadow="False"
-                   VerticalOptions="Center">
-                    <Image Source="settings.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
-                </Frame>
-            </Grid>
+            <!-- Icono de chat (opcional) -->
+            <Image Source="chat_icon.png"
+           WidthRequest="28" HeightRequest="28"
+           Grid.Column="2"
+           VerticalOptions="Center"
+           HorizontalOptions="End" />
+
+            <!-- Botón de ajustes -->
+            <Frame Grid.Column="3"
+       HeightRequest="42" WidthRequest="42"
+       CornerRadius="100"
+       BackgroundColor="Transparent"
+       BorderColor="Black"
+       Padding="5"
+       HasShadow="False"
+       VerticalOptions="Center"
+       HorizontalOptions="End">
+                <Frame.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnLogoutTapped" />
+                </Frame.GestureRecognizers>
+                <Image Source="settings.png"
+           WidthRequest="28"
+           VerticalOptions="Center" />
+            </Frame>
+
         </Grid>
+
 
         <BoxView Grid.Row="1" HeightRequest="2" Color="Black"/>
 
         <!-- Search bar -->
         <Frame Grid.Row="2" CornerRadius="100" Padding="10" BackgroundColor="White" HasShadow="False"
                BorderColor="Black" Margin="20,0,20,10">
-            <SearchBar Margin="-10,0,20,0" Keyboard="Text" Placeholder="Search anything here..." PlaceholderColor="Black" TextColor="Black" FontAttributes="Bold"/>
+            <SearchBar Text="{Binding SearchText}"
+               Placeholder="Search anything here..."
+               PlaceholderColor="Black"
+               TextColor="Black"
+               FontAttributes="Bold"
+               Margin="-10,0,20,0"
+               Keyboard="Text" />
+
         </Frame>
         
 
@@ -153,15 +180,29 @@
                                     HeightRequest="150">
                                     <Image Source="dotnet_bot.png" HeightRequest="140" Aspect="AspectFit" Margin="0,0,0,5" />
                                 </Frame>
-                                <Label Text="{Binding Titulo}" FontAttributes="Bold"
+                                <Label Text="{Binding Libro.Titulo}" FontAttributes="Bold"
                                        FontSize="18" LineBreakMode="TailTruncation" TextColor="Black" Padding="10,10,0,0" />
-                                <Label Text="{Binding Autor, StringFormat='by {0}'}"
+                            <Label Text="{Binding Libro.Autor, StringFormat='by {0}'}"
                                        FontSize="12" TextColor="#999999"  Padding="10,0,0,10" />
-                            </VerticalStackLayout>
+                            <Button Text="{Binding EstaPrestado, Converter={StaticResource PrestamoConverter}}"
+        Command="{Binding BindingContext.PedirPrestamoCommand, Source={x:Reference MainPageView}}"
+        CommandParameter="{Binding Libro}"
+        BackgroundColor="{Binding EstaPrestado, Converter={StaticResource PrestamoColorConverter}}"
+        TextColor="{Binding EstaPrestado, Converter={StaticResource PrestamoTextColorConverter}}"
+        FontSize="12"
+        Margin="10,0,10,10"
+        CornerRadius="10" />
+
+
+
+
+                        </VerticalStackLayout>
                         </Frame>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+        
+
 
         <!-- Return button -->
         <Button Grid.Row="5" Text="Volver a Welcome"

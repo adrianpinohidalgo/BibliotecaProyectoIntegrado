@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="BibliotecaProyectoIntegrado.Views.LoginPage"
+             Title="Iniciar Sesión">
+
+    <StackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+
+        <Label Text="Inicia sesión" FontSize="32" HorizontalOptions="Center" />
+
+        <Entry x:Name="EmailEntry" Placeholder="Email" Keyboard="Email" />
+        <Entry x:Name="ContrasenaEntry" Placeholder="Contraseña" IsPassword="True" />
+
+
+        <Button Text="Entrar" Clicked="OnLoginClicked"
+                BackgroundColor="#85BA94"
+                TextColor="White"
+                CornerRadius="20"/>
+
+        <Label x:Name="ErrorLabel" TextColor="Red" IsVisible="False" />
+
+    </StackLayout>
+</ContentPage>
