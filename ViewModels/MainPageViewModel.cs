@@ -3,6 +3,7 @@ using System.Windows.Input;
 using BibliotecaProyectoIntegrado.Services;
 using BibliotecaProyectoIntegrado.Models;
 using CommunityToolkit.Mvvm.Messaging;
+using Plugin.LocalNotification;
 
 namespace BibliotecaProyectoIntegrado.ViewModels;
 
@@ -67,9 +68,37 @@ public class MainPageViewModel : BaseViewModel
             }
             else
             {
-                // Pedir préstamo
-                await DatabaseService.RegistrarPrestamoAsync(libro.Id, usuarioId);
-                await Application.Current.MainPage.DisplayAlert("Éxito", $"Has solicitado '{libro.Titulo}'.", "OK");
+                // Registrar préstamo y obtener datos
+                var (exito, libroPrestado, usuario) = await DatabaseService.RegistrarPrestamoYObtenerDatosAsync(libro.Id, usuarioId);
+
+                if (exito && libroPrestado != null && usuario != null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Éxito", $"Has solicitado '{libro.Titulo}'.", "OK");
+
+                    var request = new NotificationRequest
+                    {
+                        NotificationId = (int)DateTime.Now.Ticks % int.MaxValue,
+                        Title = "¡Préstamo Registrado!",
+                        Description = $"Hola {usuario.Nombre}, has tomado prestado '{libro.Titulo}'. Devuelve antes del {DateTime.Now.AddDays(14):dd/MM/yyyy}",
+                        Schedule = new NotificationRequestSchedule
+                        {
+                            NotifyTime = DateTime.Now.AddSeconds(1)
+                        }
+                    };
+
+                    try
+                    {
+                        await LocalNotificationCenter.Current.Show(request);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error notificando: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "No se pudo registrar el préstamo.", "OK");
+                }
             }
 
             RecargarLibros();
@@ -80,6 +109,7 @@ public class MainPageViewModel : BaseViewModel
             await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
         }
     }
+
 
 
     private async Task RealizarPrestamoAsync(Libro libro)

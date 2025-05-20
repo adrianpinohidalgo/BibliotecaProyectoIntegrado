@@ -1,5 +1,10 @@
 ﻿using Android.App;
 using Android.Runtime;
+[assembly: UsesPermission(Android.Manifest.Permission.Vibrate)]
+[assembly: UsesPermission("android.permission.POST_NOTIFICATIONS")]
+[assembly: UsesPermission(Android.Manifest.Permission.WakeLock)]
+[assembly: UsesPermission(Android.Manifest.Permission.ReceiveBootCompleted)]
+
 
 namespace BibliotecaProyectoIntegrado
 {

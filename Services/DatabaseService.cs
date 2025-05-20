@@ -1,6 +1,7 @@
 ﻿using SQLite;
 using BibliotecaProyectoIntegrado.Models;
 using BibliotecaProyectoIntegrado.ViewModels;
+using Plugin.LocalNotification;
 
 namespace BibliotecaProyectoIntegrado.Services
 {
@@ -81,7 +82,7 @@ namespace BibliotecaProyectoIntegrado.Services
                 });
 
 
-                Preferences.Set("IsDbInitialized", true);
+                Preferences.Set("IsDbInitialized", false);
             }
         }
 
@@ -150,6 +151,37 @@ namespace BibliotecaProyectoIntegrado.Services
             inventarioDisponible.Status = "Prestado";
             await _database.UpdateAsync(inventarioDisponible);
         }
+
+        // En DatabaseService.cs
+        public static async Task<(bool Exito, Libro? Libro, Usuario? Usuario)> RegistrarPrestamoYObtenerDatosAsync(int libroId, int usuarioId)
+        {
+            var inventarioDisponible = await _database.Table<Inventario>()
+                .Where(i => i.LibroId == libroId && i.Status == "Disponible")
+                .FirstOrDefaultAsync();
+
+            if (inventarioDisponible == null)
+                return (false, null, null);
+
+            var nuevoPrestamo = new Prestamo
+            {
+                LibroId = libroId,
+                UsuarioId = usuarioId,
+                FechaPrestamo = DateTime.Now,
+                FechaDevolucion = null
+            };
+
+            await _database.InsertAsync(nuevoPrestamo);
+
+            inventarioDisponible.Status = "Prestado";
+            await _database.UpdateAsync(inventarioDisponible);
+
+            var libro = await _database.Table<Libro>().Where(l => l.Id == libroId).FirstOrDefaultAsync();
+            var usuario = await _database.Table<Usuario>().Where(u => u.Id == usuarioId).FirstOrDefaultAsync();
+
+            return (true, libro, usuario);
+        }
+
+
 
         public static async Task<List<Libro>> GetLibrosDisponiblesAsync()
         {
@@ -278,6 +310,17 @@ namespace BibliotecaProyectoIntegrado.Services
                 .ToListAsync();
 
             return inventarios.Any(i => i.Status == "Prestado");
+        }
+
+        public static async Task<List<string>> GetTableNamesAsync()
+        {
+            var result = await _database.QueryAsync<TableInfo>("SELECT name FROM sqlite_master WHERE type='table'");
+            return result.Select(r => r.name).ToList();
+        }
+
+        public class TableInfo
+        {
+            public string name { get; set; }
         }
 
 
