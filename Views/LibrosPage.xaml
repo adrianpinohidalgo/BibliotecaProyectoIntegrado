@@ -56,10 +56,13 @@
                 <DataTemplate>
                     <VerticalStackLayout Spacing="10" HorizontalOptions="Center">
                         <!--<Image Source="{Binding Imagen}" HeightRequest="200" Aspect="AspectFill" />-->
-                        <Frame CornerRadius="20" Padding="20" BackgroundColor="#FEF9EB" Margin="10" BorderColor="Black" HeightRequest="400">
-                            <Image Source="dotnet_bot.png" HeightRequest="200" Aspect="AspectFill" />
+                        <Frame CornerRadius="20" Padding="0" BackgroundColor="#FEF9EB" Margin="10" BorderColor="Black" HeightRequest="400">
+                            <Image Source="{Binding Imagen}" 
+                               Aspect="AspectFill" 
+                               VerticalOptions="FillAndExpand" 
+                               HorizontalOptions="FillAndExpand" />
                         </Frame>
-                        
+
                         <Label Text="{Binding Titulo}" FontSize="24" FontAttributes="Bold" TextColor="Black" HorizontalTextAlignment="Center" />
                         <Label Text="{Binding Autor, StringFormat='by {0}'}" FontSize="14" TextColor="Gray" HorizontalTextAlignment="Center" />
 

@@ -55,7 +55,7 @@
                 <Frame.GestureRecognizers>
                     <TapGestureRecognizer Tapped="OnLogoutTapped" />
                 </Frame.GestureRecognizers>
-                <Image Source="settings.png"
+                <Image Source="logout.png"
            WidthRequest="28"
            VerticalOptions="Center" />
             </Frame>
@@ -175,23 +175,43 @@
                             <VerticalStackLayout Spacing="5">
                                 <!-- <Image Source="{Binding Imagen}" HeightRequest="140" Aspect="AspectFill"
                                        Margin="0,0,0,5" /> -->
-                                <Frame CornerRadius="20"
-                                   BorderColor="Gray"
-                                    HeightRequest="150">
-                                    <Image Source="dotnet_bot.png" HeightRequest="140" Aspect="AspectFit" Margin="0,0,0,5" />
-                                </Frame>
-                                <Label Text="{Binding Libro.Titulo}" FontAttributes="Bold"
+                            <Frame CornerRadius="20"
+                               BorderColor="Gray"
+                               HeightRequest="150"
+                               Padding="0">
+                                                        <Image Source="{Binding Libro.Imagen}" 
+                                   Aspect="AspectFill" 
+                                   VerticalOptions="FillAndExpand" 
+                                   HorizontalOptions="FillAndExpand" />
+                            </Frame>
+                            <Label Text="{Binding Libro.Titulo}" FontAttributes="Bold"
                                        FontSize="18" LineBreakMode="TailTruncation" TextColor="Black" Padding="10,10,0,0" />
                             <Label Text="{Binding Libro.Autor, StringFormat='by {0}'}"
                                        FontSize="12" TextColor="#999999"  Padding="10,0,0,10" />
-                            <Button Text="{Binding EstaPrestado, Converter={StaticResource PrestamoConverter}}"
-        Command="{Binding BindingContext.PedirPrestamoCommand, Source={x:Reference MainPageView}}"
-        CommandParameter="{Binding Libro}"
-        BackgroundColor="{Binding EstaPrestado, Converter={StaticResource PrestamoColorConverter}}"
-        TextColor="{Binding EstaPrestado, Converter={StaticResource PrestamoTextColorConverter}}"
-        FontSize="12"
-        Margin="10,0,10,10"
-        CornerRadius="10" />
+                            <Button
+                               TextColor="White"
+    Command="{Binding BindingContext.PedirPrestamoCommand, Source={x:Reference MainPageView}}"
+    CommandParameter="{Binding Libro}">
+                                <Button.Text>
+                                    <MultiBinding Converter="{StaticResource PrestamoBotonConverter}">
+                                        <Binding Path="EstaPrestadoPorUsuarioActual"/>
+                                        <Binding Path="EstaPrestadoPorOtroUsuario"/>
+                                    </MultiBinding>
+                                </Button.Text>
+                                <Button.BackgroundColor>
+                                    <MultiBinding Converter="{StaticResource PrestamoBotonConverter}" ConverterParameter="color">
+                                        <Binding Path="EstaPrestadoPorUsuarioActual"/>
+                                        <Binding Path="EstaPrestadoPorOtroUsuario"/>
+                                    </MultiBinding>
+                                </Button.BackgroundColor>
+                                <Button.IsEnabled>
+                                    <MultiBinding Converter="{StaticResource PrestamoBotonConverter}" ConverterParameter="enabled">
+                                        <Binding Path="EstaPrestadoPorUsuarioActual"/>
+                                        <Binding Path="EstaPrestadoPorOtroUsuario"/>
+                                    </MultiBinding>
+                                </Button.IsEnabled>
+                            </Button>
+
 
 
 
@@ -204,15 +224,6 @@
         
 
 
-        <!-- Return button -->
-        <Button Grid.Row="5" Text="Volver a Welcome"
-                Clicked="OnResetWelcomeClicked"
-                BackgroundColor="#F5F5F5"
-                TextColor="Black"
-                BorderColor="#CCCCCC"
-                CornerRadius="25"
-                FontSize="13"
-                Margin="0,10"
-                Padding="12,6"/>
+        
     </Grid>
 </ContentPage>

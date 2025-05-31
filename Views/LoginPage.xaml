@@ -19,5 +19,16 @@
 
         <Label x:Name="ErrorLabel" TextColor="Red" IsVisible="False" />
 
+        <!-- Return button -->
+        <Button Grid.Row="5" Text="Volver a Welcome"
+        Clicked="OnResetWelcomeClicked"
+        BackgroundColor="#F5F5F5"
+        TextColor="Black"
+        BorderColor="#CCCCCC"
+        CornerRadius="25"
+        FontSize="13"
+        Margin="0,10"
+        Padding="12,6"/>
+
     </StackLayout>
 </ContentPage>

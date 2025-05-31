@@ -25,26 +25,26 @@ namespace BibliotecaProyectoIntegrado.Services
             {
                 var books = new List<Libro>
                 {
-                    new() { Titulo = "The Hobbit", Autor = "J.R.R. Tolkien", Genero = "Fantasy", ISBN = "1234567890", Anio = 1937, Descripcion = "Un viaje inesperado." },
-                    new() { Titulo = "1984", Autor = "George Orwell", Genero = "Fiction", ISBN = "1234567891", Anio = 1949, Descripcion = "Distopía totalitaria." },
-                    new() { Titulo = "To Kill a Mockingbird", Autor = "Harper Lee", Genero = "Fiction", ISBN = "1234567892", Anio = 1960, Descripcion = "Justicia y racismo." },
-                    new() { Titulo = "Dune", Autor = "Frank Herbert", Genero = "Science Fiction", ISBN = "1234567893", Anio = 1965, Descripcion = "Planeta desértico y poder." },
-                    new() { Titulo = "Pride and Prejudice", Autor = "Jane Austen", Genero = "Romance", ISBN = "1234567894", Anio = 1813, Descripcion = "Orgullo, prejuicio y amor." },
-                    new() { Titulo = "The Great Gatsby", Autor = "F. Scott Fitzgerald", Genero = "Fiction", ISBN = "1234567895", Anio = 1925, Descripcion = "El sueño americano." },
-                    new() { Titulo = "Harry Potter y la Piedra Filosofal", Autor = "J.K. Rowling", Genero = "Fantasy", ISBN = "1234567896", Anio = 1997, Descripcion = "Magia en Hogwarts." },
-                    new() { Titulo = "El nombre del viento", Autor = "Patrick Rothfuss", Genero = "Fantasy", ISBN = "1234567897", Anio = 2007, Descripcion = "La historia de Kvothe." },
-                    new() { Titulo = "Fahrenheit 451", Autor = "Ray Bradbury", Genero = "Science Fiction", ISBN = "1234567898", Anio = 1953, Descripcion = "Libros prohibidos." },
-                    new() { Titulo = "Crónica de una muerte anunciada", Autor = "Gabriel García Márquez", Genero = "Fiction", ISBN = "1234567899", Anio = 1981, Descripcion = "Tragedia anunciada." },
-                    new() { Titulo = "Don Quijote de la Mancha", Autor = "Miguel de Cervantes", Genero = "Classic", ISBN = "1234567810", Anio = 1605, Descripcion = "Caballería y locura." },
-                    new() { Titulo = "La sombra del viento", Autor = "Carlos Ruiz Zafón", Genero = "Mystery", ISBN = "1234567811", Anio = 2001, Descripcion = "Libros y secretos." },
-                    new() { Titulo = "It", Autor = "Stephen King", Genero = "Horror", ISBN = "1234567812", Anio = 1986, Descripcion = "El terror en Derry." },
-                    new() { Titulo = "Cien años de soledad", Autor = "Gabriel García Márquez", Genero = "Fiction", ISBN = "1234567813", Anio = 1967, Descripcion = "La saga de los Buendía." },
-                    new() { Titulo = "Ready Player One", Autor = "Ernest Cline", Genero = "Science Fiction", ISBN = "1234567814", Anio = 2011, Descripcion = "Realidad virtual." },
-                    new() { Titulo = "El psicoanalista", Autor = "John Katzenbach", Genero = "Thriller", ISBN = "1234567815", Anio = 2002, Descripcion = "Juego psicológico mortal." },
-                    new() { Titulo = "El Código Da Vinci", Autor = "Dan Brown", Genero = "Thriller", ISBN = "1234567816", Anio = 2003, Descripcion = "Misterios religiosos." },
-                    new() { Titulo = "Drácula", Autor = "Bram Stoker", Genero = "Horror", ISBN = "1234567817", Anio = 1897, Descripcion = "El vampiro original." },
-                    new() { Titulo = "El señor de las moscas", Autor = "William Golding", Genero = "Fiction", ISBN = "1234567818", Anio = 1954, Descripcion = "Supervivencia infantil." },
-                    new() { Titulo = "Los juegos del hambre", Autor = "Suzanne Collins", Genero = "Dystopia", ISBN = "1234567819", Anio = 2008, Descripcion = "Lucha por sobrevivir." }
+                    new() { Titulo = "The Hobbit", Autor = "J.R.R. Tolkien", Genero = "Fantasy", ISBN = "1234567890", Anio = 1937, Descripcion = "Un viaje inesperado.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/712cDO7d73L.jpg" },
+                    new() { Titulo = "1984", Autor = "George Orwell", Genero = "Fiction", ISBN = "1234567891", Anio = 1949, Descripcion = "Distopía totalitaria.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/71kxa1-0mfL.jpg" },
+                    new() { Titulo = "To Kill a Mockingbird", Autor = "Harper Lee", Genero = "Fiction", ISBN = "1234567892", Anio = 1960, Descripcion = "Justicia y racismo.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/71FxgtFKcQL.jpg" },
+                    new() { Titulo = "Dune", Autor = "Frank Herbert", Genero = "Science Fiction", ISBN = "1234567893", Anio = 1965, Descripcion = "Planeta desértico y poder.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/81zN7udGRUL.jpg" },
+                    new() { Titulo = "Pride and Prejudice", Autor = "Jane Austen", Genero = "Romance", ISBN = "1234567894", Anio = 1813, Descripcion = "Orgullo, prejuicio y amor.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/712P0p5cXIS.jpg" },
+                    new() { Titulo = "The Great Gatsby", Autor = "F. Scott Fitzgerald", Genero = "Fiction", ISBN = "1234567895", Anio = 1925, Descripcion = "El sueño americano.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/81af+MCATTL.jpg" },
+                    new() { Titulo = "Harry Potter y la Piedra Filosofal", Autor = "J.K. Rowling", Genero = "Fantasy", ISBN = "1234567896", Anio = 1997, Descripcion = "Magia en Hogwarts.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/81YOuOGFCJL.jpg" },
+                    new() { Titulo = "El nombre del viento", Autor = "Patrick Rothfuss", Genero = "Fantasy", ISBN = "1234567897", Anio = 2007, Descripcion = "La historia de Kvothe.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/91dSMhdIzTL.jpg" },
+                    new() { Titulo = "Fahrenheit 451", Autor = "Ray Bradbury", Genero = "Science Fiction", ISBN = "1234567898", Anio = 1953, Descripcion = "Libros prohibidos.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/71OFqSRFDgL.jpg" },
+                    new() { Titulo = "Crónica de una muerte anunciada", Autor = "Gabriel García Márquez", Genero = "Fiction", ISBN = "1234567899", Anio = 1981, Descripcion = "Tragedia anunciada.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/71XHZB2RjBL.jpg" },
+                    new() { Titulo = "Don Quijote de la Mancha", Autor = "Miguel de Cervantes", Genero = "Classic", ISBN = "1234567810", Anio = 1605, Descripcion = "Caballería y locura.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/71-++hbbERL.jpg" },
+                    new() { Titulo = "La sombra del viento", Autor = "Carlos Ruiz Zafón", Genero = "Mystery", ISBN = "1234567811", Anio = 2001, Descripcion = "Libros y secretos.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/81rRDrZnucL.jpg" },
+                    new() { Titulo = "It", Autor = "Stephen King", Genero = "Horror", ISBN = "1234567812", Anio = 1986, Descripcion = "El terror en Derry.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/71QKQ9mwV7L.jpg" },
+                    new() { Titulo = "Cien años de soledad", Autor = "Gabriel García Márquez", Genero = "Fiction", ISBN = "1234567813", Anio = 1967, Descripcion = "La saga de los Buendía.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/81MI6+TpYzL.jpg" },
+                    new() { Titulo = "Ready Player One", Autor = "Ernest Cline", Genero = "Science Fiction", ISBN = "1234567814", Anio = 2011, Descripcion = "Realidad virtual.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/A1JVqNMI7UL.jpg" },
+                    new() { Titulo = "El psicoanalista", Autor = "John Katzenbach", Genero = "Thriller", ISBN = "1234567815", Anio = 2002, Descripcion = "Juego psicológico mortal.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/71vFKBEi6HL.jpg" },
+                    new() { Titulo = "El Código Da Vinci", Autor = "Dan Brown", Genero = "Thriller", ISBN = "1234567816", Anio = 2003, Descripcion = "Misterios religiosos.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/815WORuYMML.jpg" },
+                    new() { Titulo = "Drácula", Autor = "Bram Stoker", Genero = "Horror", ISBN = "1234567817", Anio = 1897, Descripcion = "El vampiro original.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/81F90H7hnML.jpg" },
+                    new() { Titulo = "El señor de las moscas", Autor = "William Golding", Genero = "Fiction", ISBN = "1234567818", Anio = 1954, Descripcion = "Supervivencia infantil.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/81P6QlauN3L.jpg" },
+                    new() { Titulo = "Los juegos del hambre", Autor = "Suzanne Collins", Genero = "Dystopia", ISBN = "1234567819", Anio = 2008, Descripcion = "Lucha por sobrevivir.", Imagen = "https://images-na.ssl-images-amazon.com/images/I/71un2hI4mcL.jpg" }
                 };
 
                 await _database.InsertAllAsync(books);
@@ -78,6 +78,14 @@ namespace BibliotecaProyectoIntegrado.Services
                     Nombre = "Pepe Lopez",
                     Email = "pepe@gmail.com",
                     NumeroSocio = "U002",
+                    Contrasena = "1234" // CONTRASEÑA DE EJEMPLO
+                });
+
+                await _database.InsertAsync(new Usuario
+                {
+                    Nombre = "Maria Perez",
+                    Email = "maria@gmail.com",
+                    NumeroSocio = "U003",
                     Contrasena = "1234" // CONTRASEÑA DE EJEMPLO
                 });
 
@@ -303,13 +311,21 @@ namespace BibliotecaProyectoIntegrado.Services
             }
         }
 
+        //public static async Task<bool> HayEjemplaresPrestadosAsync(int libroId)
+        //{
+        //    var inventarios = await _database.Table<Inventario>()
+        //        .Where(i => i.LibroId == libroId)
+        //        .ToListAsync();
+
+        //    return inventarios.Any(i => i.Status == "Prestado");
+        //}
+
         public static async Task<bool> HayEjemplaresPrestadosAsync(int libroId)
         {
             var inventarios = await _database.Table<Inventario>()
-                .Where(i => i.LibroId == libroId)
-                .ToListAsync();
-
-            return inventarios.Any(i => i.Status == "Prestado");
+                .Where(i => i.LibroId == libroId && i.Status == "Prestado")
+                .CountAsync();
+            return inventarios > 0;
         }
 
         public static async Task<List<string>> GetTableNamesAsync()
@@ -321,6 +337,44 @@ namespace BibliotecaProyectoIntegrado.Services
         public class TableInfo
         {
             public string name { get; set; }
+        }
+
+        // Agregar estos métodos a tu DatabaseService
+
+        public static async Task<List<Prestamo>> GetPrestamosActivosAsync()
+        {
+            var prestamos = await _database.Table<Prestamo>()
+                .Where(p => p.FechaDevolucion == null) // Solo préstamos sin devolver
+                .ToListAsync();
+            return prestamos;
+        }
+
+        public static async Task<List<PrestamoExtendido>> GetTodosLosPrestamosExtendidosAsync()
+        {
+            var prestamos = await _database.Table<Prestamo>()
+                .Where(p => p.FechaDevolucion == null)
+                .ToListAsync();
+
+            var extendidos = new List<PrestamoExtendido>();
+
+            foreach (var p in prestamos)
+            {
+                var libro = await _database.Table<Libro>().Where(l => l.Id == p.LibroId).FirstOrDefaultAsync();
+                var usuario = await _database.Table<Usuario>().Where(u => u.Id == p.UsuarioId).FirstOrDefaultAsync();
+
+                extendidos.Add(new PrestamoExtendido
+                {
+                    Id = p.Id,
+                    LibroId = p.LibroId,
+                    UsuarioId = p.UsuarioId,
+                    FechaPrestamo = p.FechaPrestamo,
+                    FechaDevolucion = p.FechaDevolucion,
+                    Libro = libro,
+                    Usuario = usuario
+                });
+            }
+
+            return extendidos;
         }
 
 

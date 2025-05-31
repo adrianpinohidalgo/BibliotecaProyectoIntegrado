@@ -11,6 +11,10 @@
             <local:StatusToColorConverter x:Key="StatusToColorConverter" />
             <local:EstadoColorConverter x:Key="EstadoColorConverter" />
             <local:GestionarInventarioTextConverter x:Key="GestionarInventarioTextConverter" />
+            <local:PrestamoTextoFinalConverter x:Key="PrestamoTextoFinalConverter" />
+            <local:PrestamoHabilitadoConverter x:Key="PrestamoHabilitadoConverter" />
+            <local:PrestamoColorFinalConverter x:Key="PrestamoColorFinalConverter" />
+            <local:PrestamoBotonConverter x:Key="PrestamoBotonConverter"/>
 
             <Style TargetType="Label">
                 <Setter Property="FontFamily" Value="PoppinsRegular" />

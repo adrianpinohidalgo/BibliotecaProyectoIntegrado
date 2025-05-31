@@ -13,6 +13,17 @@ namespace BibliotecaProyectoIntegrado.ViewModels
 
         public ICommand DevolverCommand { get; }
 
+        private bool _esAdmin;
+        public bool EsAdmin
+        {
+            get => _esAdmin;
+            set
+            {
+                _esAdmin = value;
+                OnPropertyChanged();
+            }
+        }
+
         public PrestamosViewModel()
         {
             DevolverCommand = new Command<PrestamoExtendido>(async (prestamo) => await DevolverPrestamoAsync(prestamo));
@@ -24,10 +35,25 @@ namespace BibliotecaProyectoIntegrado.ViewModels
         private async void LoadPrestamos()
         {
             int usuarioId = Preferences.Get("UsuarioId", 0);
-            var prestamosActivos = await DatabaseService.GetPrestamosExtendidosDelUsuarioAsync(usuarioId);
+            var usuarios = await DatabaseService.GetUsuariosAsync();
+            var usuario = usuarios.FirstOrDefault(u => u.Id == usuarioId);
+            EsAdmin = usuario?.NumeroSocio == "U001";
+
+            List<PrestamoExtendido> prestamosActivos;
+
+            if (EsAdmin)
+            {
+                prestamosActivos = await DatabaseService.GetTodosLosPrestamosExtendidosAsync();
+            }
+            else
+            {
+                prestamosActivos = await DatabaseService.GetPrestamosExtendidosDelUsuarioAsync(usuarioId);
+            }
+
             Prestamos = new ObservableCollection<PrestamoExtendido>(prestamosActivos);
             OnPropertyChanged(nameof(Prestamos));
         }
+
 
         private async Task DevolverPrestamoAsync(PrestamoExtendido prestamoExtendido)
         {

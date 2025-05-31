@@ -37,80 +37,7 @@ public class MainPageViewModel : BaseViewModel
         LoadDataAsync();
     }
 
-    private async Task AlternarPrestamoAsync(Libro libro)
-    {
-        try
-        {
-            int usuarioId = Preferences.Get("UsuarioId", 0);
-            if (usuarioId == 0)
-            {
-                await Application.Current.MainPage.DisplayAlert("Error", "Usuario no identificado.", "OK");
-                return;
-            }
-
-            var prestamos = await DatabaseService.GetPrestamosDelUsuarioAsync(usuarioId);
-            var prestamoExistente = prestamos.FirstOrDefault(p => p.LibroId == libro.Id && p.FechaDevolucion == null);
-
-            if (prestamoExistente != null)
-            {
-                // Devolver libro
-                prestamoExistente.FechaDevolucion = DateTime.Now;
-                await DatabaseService.UpdatePrestamoAsync(prestamoExistente);
-
-                var inventario = await DatabaseService.GetInventarioPorLibroAsync(libro.Id);
-                if (inventario != null)
-                {
-                    inventario.Status = "Disponible";
-                    await DatabaseService.UpdateInventarioAsync(inventario);
-                }
-
-                await Application.Current.MainPage.DisplayAlert("Devolución", $"Has devuelto '{libro.Titulo}'.", "OK");
-            }
-            else
-            {
-                // Registrar préstamo y obtener datos
-                var (exito, libroPrestado, usuario) = await DatabaseService.RegistrarPrestamoYObtenerDatosAsync(libro.Id, usuarioId);
-
-                if (exito && libroPrestado != null && usuario != null)
-                {
-                    await Application.Current.MainPage.DisplayAlert("Éxito", $"Has solicitado '{libro.Titulo}'.", "OK");
-
-                    var request = new NotificationRequest
-                    {
-                        NotificationId = (int)DateTime.Now.Ticks % int.MaxValue,
-                        Title = "¡Préstamo Registrado!",
-                        Description = $"Hola {usuario.Nombre}, has tomado prestado '{libro.Titulo}'. Devuelve antes del {DateTime.Now.AddDays(14):dd/MM/yyyy}",
-                        Schedule = new NotificationRequestSchedule
-                        {
-                            NotifyTime = DateTime.Now.AddSeconds(1)
-                        }
-                    };
-
-                    try
-                    {
-                        await LocalNotificationCenter.Current.Show(request);
-                    }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Error notificando: {ex.Message}");
-                    }
-                }
-                else
-                {
-                    await Application.Current.MainPage.DisplayAlert("Error", "No se pudo registrar el préstamo.", "OK");
-                }
-            }
-
-            RecargarLibros();
-            WeakReferenceMessenger.Default.Send(new LibroActualizadoMessage(libro));
-        }
-        catch (Exception ex)
-        {
-            await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
-        }
-    }
-
-
+ 
 
     private async Task RealizarPrestamoAsync(Libro libro)
     {
@@ -146,7 +73,7 @@ public class MainPageViewModel : BaseViewModel
 
         var books = await DatabaseService.GetBooksAsync();
         AllBooks = new ObservableCollection<Libro>(books);
-        ApplyFilters(); // ✅ actualiza correctamente FilteredBooks
+        await ApplyFiltersAsync(); // ✅ actualiza correctamente FilteredBooks
 
         AvailableBooks = await DatabaseService.GetAvailableBooksCountAsync();
         ActiveLoans = await DatabaseService.GetActiveLoansCountAsync();
@@ -213,36 +140,213 @@ public class MainPageViewModel : BaseViewModel
         ApplyFilters();
     }
 
+    //private async void ApplyFilters()
+    //{
+    //    var usuarioId = Preferences.Get("UsuarioId", 0);
+    //    var prestamos = await DatabaseService.GetPrestamosDelUsuarioAsync(usuarioId);
+
+    //    var prestadosIds = prestamos.Select(p => p.LibroId).ToHashSet();
+
+    //    var filtrados = AllBooks
+    //        .Where(b =>
+    //            (SelectedGenre == "All" || b.Genero.Equals(SelectedGenre, StringComparison.OrdinalIgnoreCase)) &&
+    //            (string.IsNullOrWhiteSpace(SearchText) ||
+    //             (!string.IsNullOrEmpty(b.Titulo) && b.Titulo.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) ||
+    //             (!string.IsNullOrEmpty(b.Autor) && b.Autor.Contains(SearchText, StringComparison.OrdinalIgnoreCase)))
+    //        )
+    //        .Select(libro => new LibroConEstado
+    //        {
+    //            Libro = libro,
+    //            EstaPrestado = prestadosIds.Contains(libro.Id)
+    //        });
+
+    //    FilteredBooks = new ObservableCollection<LibroConEstado>(filtrados);
+    //}
+
     private async void ApplyFilters()
     {
         var usuarioId = Preferences.Get("UsuarioId", 0);
-        var prestamos = await DatabaseService.GetPrestamosDelUsuarioAsync(usuarioId);
 
-        var prestadosIds = prestamos.Select(p => p.LibroId).ToHashSet();
+        // Obtener préstamos del usuario actual
+        var prestamosUsuarioActual = await DatabaseService.GetPrestamosDelUsuarioAsync(usuarioId);
+        var prestadosUsuarioActualIds = prestamosUsuarioActual
+            .Where(p => p.FechaDevolucion == null) // Solo activos
+            .Select(p => p.LibroId)
+            .ToHashSet();
 
-        var filtrados = AllBooks
+        var filtrados = new List<LibroConEstado>();
+
+        var librosParaFiltrar = AllBooks
             .Where(b =>
                 (SelectedGenre == "All" || b.Genero.Equals(SelectedGenre, StringComparison.OrdinalIgnoreCase)) &&
                 (string.IsNullOrWhiteSpace(SearchText) ||
                  (!string.IsNullOrEmpty(b.Titulo) && b.Titulo.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) ||
                  (!string.IsNullOrEmpty(b.Autor) && b.Autor.Contains(SearchText, StringComparison.OrdinalIgnoreCase)))
-            )
-            .Select(libro => new LibroConEstado
+            );
+
+        foreach (var libro in librosParaFiltrar)
+        {
+            bool estaPrestadoPorUsuarioActual = prestadosUsuarioActualIds.Contains(libro.Id);
+            bool hayEjemplaresPrestados = await DatabaseService.HayEjemplaresPrestadosAsync(libro.Id);
+            bool estaPrestadoPorOtroUsuario = hayEjemplaresPrestados && !estaPrestadoPorUsuarioActual;
+
+            filtrados.Add(new LibroConEstado
             {
                 Libro = libro,
-                EstaPrestado = prestadosIds.Contains(libro.Id)
+                EstaPrestadoPorUsuarioActual = estaPrestadoPorUsuarioActual,
+                EstaPrestadoPorOtroUsuario = estaPrestadoPorOtroUsuario
             });
+        }
 
         FilteredBooks = new ObservableCollection<LibroConEstado>(filtrados);
     }
 
+    private async Task AlternarPrestamoAsync(Libro libro)
+    {
+        try
+        {
+            int usuarioId = Preferences.Get("UsuarioId", 0);
+            if (usuarioId == 0)
+            {
+                await Application.Current.MainPage.DisplayAlert("Error", "Usuario no identificado.", "OK");
+                return;
+            }
+
+            // ✅ Verificar el estado actual del libro
+            var libroConEstado = FilteredBooks.FirstOrDefault(l => l.Libro.Id == libro.Id);
+            if (libroConEstado != null && libroConEstado.EstaPrestadoPorOtroUsuario)
+            {
+                await Application.Current.MainPage.DisplayAlert("No disponible",
+                    $"El libro '{libro.Titulo}' está prestado por otro usuario.", "OK");
+                return;
+            }
+
+            var prestamos = await DatabaseService.GetPrestamosDelUsuarioAsync(usuarioId);
+            var prestamoExistente = prestamos.FirstOrDefault(p => p.LibroId == libro.Id && p.FechaDevolucion == null);
+
+            if (prestamoExistente != null)
+            {
+                // Devolver libro (solo si lo tiene el usuario actual)
+                prestamoExistente.FechaDevolucion = DateTime.Now;
+                await DatabaseService.UpdatePrestamoAsync(prestamoExistente);
+
+                var inventario = await DatabaseService.GetInventarioPorLibroAsync(libro.Id);
+                if (inventario != null)
+                {
+                    inventario.Status = "Disponible";
+                    await DatabaseService.UpdateInventarioAsync(inventario);
+                }
+
+                await Application.Current.MainPage.DisplayAlert("Devolución", $"Has devuelto '{libro.Titulo}'.", "OK");
+            }
+            else
+            {
+                // Verificar disponibilidad antes de prestar
+                bool hayEjemplaresPrestados = await DatabaseService.HayEjemplaresPrestadosAsync(libro.Id);
+                if (hayEjemplaresPrestados)
+                {
+                    await Application.Current.MainPage.DisplayAlert("No disponible",
+                        $"El libro '{libro.Titulo}' no está disponible en este momento.", "OK");
+                    return;
+                }
+
+                // Registrar préstamo
+                var (exito, libroPrestado, usuario) = await DatabaseService.RegistrarPrestamoYObtenerDatosAsync(libro.Id, usuarioId);
+
+                if (exito && libroPrestado != null && usuario != null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Éxito", $"Has solicitado '{libro.Titulo}'.", "OK");
+
+                    // Notificación
+                    var request = new NotificationRequest
+                    {
+                        NotificationId = (int)DateTime.Now.Ticks % int.MaxValue,
+                        Title = "¡Préstamo Registrado!",
+                        Description = $"Hola {usuario.Nombre}, has tomado prestado '{libro.Titulo}'. Devuelve antes del {DateTime.Now.AddDays(14):dd/MM/yyyy}",
+                        Schedule = new NotificationRequestSchedule
+                        {
+                            NotifyTime = DateTime.Now.AddSeconds(1)
+                        }
+                    };
+
+                    try
+                    {
+                        await LocalNotificationCenter.Current.Show(request);
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error notificando: {ex.Message}");
+                    }
+                }
+                else
+                {
+                    await Application.Current.MainPage.DisplayAlert("Error", "No se pudo registrar el préstamo.", "OK");
+                }
+            }
+
+            await Task.Delay(300); // Espera opcional para asegurar la escritura en BD
+            RecargarLibros();
+            WeakReferenceMessenger.Default.Send(new LibroActualizadoMessage(libro));
+        }
+        catch (Exception ex)
+        {
+            await Application.Current.MainPage.DisplayAlert("Error", ex.Message, "OK");
+        }
+    }
 
     private async void RecargarLibros()
     {
         var books = await DatabaseService.GetBooksAsync();
         AllBooks = new ObservableCollection<Libro>(books);
-        ApplyFilters();
+
+        // Asegura que la vista esté actualizada con datos frescos
+        await Task.Delay(200); // Pequeño delay para dar tiempo al DB commit si es necesario
+        await ApplyFiltersAsync();
     }
+
+    private async Task ApplyFiltersAsync()
+    {
+        var usuarioId = Preferences.Get("UsuarioId", 0);
+
+        var prestamosUsuarioActual = await DatabaseService.GetPrestamosDelUsuarioAsync(usuarioId);
+        var prestadosUsuarioActualIds = prestamosUsuarioActual
+            .Where(p => p.FechaDevolucion == null)
+            .Select(p => p.LibroId)
+            .ToHashSet();
+
+        var filtrados = new List<LibroConEstado>();
+
+        var librosParaFiltrar = AllBooks
+            .Where(b =>
+                (SelectedGenre == "All" || b.Genero.Equals(SelectedGenre, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrWhiteSpace(SearchText) ||
+                 (!string.IsNullOrEmpty(b.Titulo) && b.Titulo.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) ||
+                 (!string.IsNullOrEmpty(b.Autor) && b.Autor.Contains(SearchText, StringComparison.OrdinalIgnoreCase)))
+            );
+
+        foreach (var libro in librosParaFiltrar)
+        {
+            bool estaPrestadoPorUsuarioActual = prestadosUsuarioActualIds.Contains(libro.Id);
+            bool hayEjemplaresPrestados = await DatabaseService.HayEjemplaresPrestadosAsync(libro.Id);
+            bool estaPrestadoPorOtroUsuario = hayEjemplaresPrestados && !estaPrestadoPorUsuarioActual;
+
+            filtrados.Add(new LibroConEstado
+            {
+                Libro = libro,
+                EstaPrestadoPorUsuarioActual = estaPrestadoPorUsuarioActual,
+                EstaPrestadoPorOtroUsuario = estaPrestadoPorOtroUsuario
+            });
+        }
+
+        FilteredBooks = new ObservableCollection<LibroConEstado>(filtrados);
+
+        System.Diagnostics.Debug.WriteLine($"Usuario actual: {usuarioId}");
+        System.Diagnostics.Debug.WriteLine($"Préstamos activos del usuario: {prestadosUsuarioActualIds.Count}");
+
+    }
+
+
+
 
 
 

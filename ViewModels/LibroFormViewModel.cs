@@ -41,7 +41,8 @@ public partial class LibroFormViewModel : ObservableObject, IQueryAttributable
                 Genero = libroParam.Genero,
                 ISBN = libroParam.ISBN,
                 Anio = libroParam.Anio,
-                Descripcion = libroParam.Descripcion
+                Descripcion = libroParam.Descripcion,
+                Imagen = libroParam.Imagen
             };
         }
     }

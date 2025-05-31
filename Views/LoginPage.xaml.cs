@@ -14,6 +14,12 @@ namespace BibliotecaProyectoIntegrado.Views
 
         }
 
+        private async void OnResetWelcomeClicked(object sender, EventArgs e)
+        {
+            Preferences.Set("IsFirstLaunch", true);
+            Application.Current.MainPage = new NavigationPage(new WelcomePage());
+        }
+
         protected override async void OnAppearing()
         {
             base.OnAppearing();

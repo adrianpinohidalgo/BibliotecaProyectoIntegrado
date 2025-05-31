@@ -49,6 +49,10 @@
                             <Label Text="{Binding Libro.Titulo}" FontAttributes="Bold" FontSize="16" />
                             <Label Text="{Binding Libro.Autor, StringFormat='Autor: {0}'}" FontSize="14" />
                             <Label Text="{Binding FechaPrestamo, StringFormat='Prestado el {0:dd/MM/yyyy}'}" FontSize="12" TextColor="Gray"/>
+                            <Label Text="{Binding Usuario.Nombre, StringFormat='Usuario: {0}'}"
+       FontSize="12" TextColor="Gray"
+       IsVisible="{Binding BindingContext.EsAdmin, Source={x:Reference PrestamosPageView}}" />
+
                             <Button Text="Devolver"
                             Command="{Binding BindingContext.DevolverCommand, Source={x:Reference Name=PrestamosPageView}}"
                             CommandParameter="{Binding .}"

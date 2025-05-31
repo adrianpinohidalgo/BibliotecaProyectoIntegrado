@@ -14,7 +14,8 @@
             <Entry Placeholder="Autor" Text="{Binding LibroEditando.Autor}" />
             <Entry Placeholder="Género" Text="{Binding LibroEditando.Genero}" />
             <Entry Placeholder="ISBN" Text="{Binding LibroEditando.ISBN}" />
-            <Entry Placeholder="Año" Text="{Binding LibroEditando.Anio}" Keyboard="Numeric" />
+            <Entry Placeholder="Año" Text="{Binding LibroEditando.Anio}" />
+            <Entry Placeholder="Imagen" Text="{Binding LibroEditando.Imagen}" />
 
 
             <Button Text="Guardar"

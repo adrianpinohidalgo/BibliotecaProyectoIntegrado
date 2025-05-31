@@ -31,14 +31,14 @@
 
             <VerticalStackLayout>
                 <!-- Título grande -->
-                <Label Text="Discover Thousands of Books"
+                <Label Text="Descubre cientos de libros"
                        FontSize="24"
                        FontAttributes="Bold"
                        TextColor="Black"
                        HorizontalOptions="Center" />
 
                 <!-- Descripción -->
-                <Label Text="Explore a vast library of e-books across genres—ready to read anytime, anywhere."
+                <Label Text="Explora una amplia biblioteca de libros de todos los géneros, listos para leer en cualquier momento y lugar."
                        FontSize="14"
                        TextColor="DarkGray"
                        HorizontalOptions="Center"
@@ -46,7 +46,7 @@
             </VerticalStackLayout>
 
             <!-- Botón -->
-            <Button Text="Get Started"
+            <Button Text="Comenzar"
                     FontSize="20"
                     BackgroundColor="#85BA94"
                     TextColor="White"
