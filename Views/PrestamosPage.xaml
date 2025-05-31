@@ -10,38 +10,30 @@
     </ContentPage.BindingContext>
 
 
-    <VerticalStackLayout Spacing="20">
+    <Grid RowDefinitions="Auto, *">
+        <!-- Encabezado -->
+        <VerticalStackLayout Spacing="20" Padding="0" Grid.Row="0">
+            <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,20,20,0" VerticalOptions="Start">
+                <Frame Grid.Column="0" HeightRequest="42" WidthRequest="42"
+                       CornerRadius="100" BackgroundColor="White" BorderColor="White"
+                       Padding="5" HasShadow="False" VerticalOptions="Center">
+                    <Image Source="pe.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                </Frame>
 
-        <Grid ColumnDefinitions="Auto,*,Auto" Padding="20,20,20,0" VerticalOptions="Start">
-            <Frame Grid.Column="0"
-            HeightRequest="42" WidthRequest="42"
-            CornerRadius="100"
-            BackgroundColor="White"
-            BorderColor="White"
-            Padding="5"
-            HasShadow="False"
-            VerticalOptions="Center">
-                <Image Source="pe.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
-            </Frame>
+                <Label Grid.Column="1" Text="Prestamos" FontSize="20" FontAttributes="Bold"
+                       TextColor="Black" Margin="0,5,0,0" HorizontalOptions="Center" />
 
-            <!-- Título de la sección -->
-            <Label Grid.Column="1" Text="Prestamos" FontSize="20" FontAttributes="Bold" TextColor="Black" Margin="0,5,0,0" HorizontalOptions="Center" />
+                <Frame Grid.Column="2" HeightRequest="42" WidthRequest="42"
+                       CornerRadius="100" BackgroundColor="White" BorderColor="White"
+                       Padding="5" HasShadow="False" VerticalOptions="Center">
+                    <Image Source="pep.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
+                </Frame>
+            </Grid>
+            <BoxView HeightRequest="2" Color="Black" Margin="0,0" />
+        </VerticalStackLayout>
 
-            <Frame Grid.Column="2"
-           HeightRequest="42" WidthRequest="42"
-           CornerRadius="100"
-           BackgroundColor="White"
-           BorderColor="White"
-           Padding="5"
-           HasShadow="False"
-           VerticalOptions="Center">
-                <Image Source="pep.png" WidthRequest="28" HeightRequest="28" VerticalOptions="Center" />
-            </Frame>
-        </Grid>
-
-        <BoxView HeightRequest="2" Color="Black"/>
-
-        <CollectionView ItemsSource="{Binding Prestamos}" Margin="20,0,20,0">
+        <!-- Lista con scroll -->
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Prestamos}" Margin="20,0,20,0">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame BorderColor="Black" CornerRadius="15" Padding="10" Margin="5">
@@ -50,22 +42,20 @@
                             <Label Text="{Binding Libro.Autor, StringFormat='Autor: {0}'}" FontSize="14" />
                             <Label Text="{Binding FechaPrestamo, StringFormat='Prestado el {0:dd/MM/yyyy}'}" FontSize="12" TextColor="Gray"/>
                             <Label Text="{Binding Usuario.Nombre, StringFormat='Usuario: {0}'}"
-       FontSize="12" TextColor="Gray"
-       IsVisible="{Binding BindingContext.EsAdmin, Source={x:Reference PrestamosPageView}}" />
+                                   FontSize="12" TextColor="Gray"
+                                   IsVisible="{Binding BindingContext.EsAdmin, Source={x:Reference PrestamosPageView}}" />
 
                             <Button Text="Devolver"
-                            Command="{Binding BindingContext.DevolverCommand, Source={x:Reference Name=PrestamosPageView}}"
-                            CommandParameter="{Binding .}"
-                            BackgroundColor="#FFCDD2"
-                            TextColor="Black"
-                            CornerRadius="10"
-                            Margin="0,10,0,0"/>
+                                    Command="{Binding BindingContext.DevolverCommand, Source={x:Reference PrestamosPageView}}"
+                                    CommandParameter="{Binding .}"
+                                    BackgroundColor="#FFCDD2"
+                                    TextColor="Black"
+                                    CornerRadius="10"
+                                    Margin="0,10,0,0"/>
                         </VerticalStackLayout>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
-
-
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>
