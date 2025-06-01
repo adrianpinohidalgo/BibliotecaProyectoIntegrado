@@ -318,7 +318,7 @@ public class MainPageViewModel : BaseViewModel
 
         var librosParaFiltrar = AllBooks
             .Where(b =>
-                (SelectedGenre == "All" || b.Genero.Equals(SelectedGenre, StringComparison.OrdinalIgnoreCase)) &&
+                (SelectedGenre == "Todos" || b.Genero.Equals(SelectedGenre, StringComparison.OrdinalIgnoreCase)) &&
                 (string.IsNullOrWhiteSpace(SearchText) ||
                  (!string.IsNullOrEmpty(b.Titulo) && b.Titulo.Contains(SearchText, StringComparison.OrdinalIgnoreCase)) ||
                  (!string.IsNullOrEmpty(b.Autor) && b.Autor.Contains(SearchText, StringComparison.OrdinalIgnoreCase)))
