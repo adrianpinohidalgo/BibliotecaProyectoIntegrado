@@ -28,7 +28,7 @@
             </Frame>
 
             <!-- Título de la sección -->
-            <Label Grid.Column="1" Text="Book Details" FontSize="20" FontAttributes="Bold" TextColor="Black" Margin="0,5,0,0" HorizontalOptions="Center" />
+            <Label Grid.Column="1" Text="Detalles de los libros" FontSize="20" FontAttributes="Bold" TextColor="Black" Margin="0,5,0,0" HorizontalOptions="Center" />
 
             <Frame Grid.Column="2"
                    IsVisible="{Binding EsAdmin}"
