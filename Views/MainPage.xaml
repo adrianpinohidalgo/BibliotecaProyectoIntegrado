@@ -69,7 +69,7 @@
         <Frame Grid.Row="2" CornerRadius="100" Padding="10" BackgroundColor="White" HasShadow="False"
                BorderColor="Black" Margin="20,0,20,10">
             <SearchBar Text="{Binding SearchText}"
-               Placeholder="Search anything here..."
+               Placeholder="Busca por título o por autor..."
                PlaceholderColor="Black"
                TextColor="Black"
                FontAttributes="Bold"
@@ -82,9 +82,9 @@
         <!-- Genre filters -->
         <ScrollView Grid.Row="3" Orientation="Horizontal" HeightRequest="40">
             <HorizontalStackLayout Spacing="10" Padding="20,0,20,0">
-                <Button Text="All"
+                <Button Text="Todos"
                     Command="{Binding FilterCommand}"
-                    CommandParameter="All"
+                    CommandParameter="Todos"
                     FontAttributes="Bold"
                     TextColor="Black"
                     BorderColor="Black" BorderWidth="2"
@@ -92,16 +92,16 @@
                     <Button.Triggers>
                         <DataTrigger TargetType="Button"
                              Binding="{Binding SelectedGenre}"
-                             Value="All">
+                             Value="Todos">
                             <Setter Property="BackgroundColor" Value="Black"/>
                             <Setter Property="TextColor" Value="White"/>
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>
 
-                <Button Text="Fiction"
+                <Button Text="Ficcion"
                     Command="{Binding FilterCommand}"
-                    CommandParameter="Fiction"
+                    CommandParameter="Ficcion"
                     FontAttributes="Bold"
                     TextColor="Black"
                     BorderColor="Black" BorderWidth="2"
@@ -109,16 +109,16 @@
                     <Button.Triggers>
                         <DataTrigger TargetType="Button"
                              Binding="{Binding SelectedGenre}"
-                             Value="Fiction">
+                             Value="Ficcion">
                             <Setter Property="BackgroundColor" Value="Black"/>
                             <Setter Property="TextColor" Value="White"/>
                         </DataTrigger>
                     </Button.Triggers>
                 </Button>
 
-                <Button Text="Fantasy"
+                <Button Text="Fantasia"
                      Command="{Binding FilterCommand}"
-                     CommandParameter="Fantasy"
+                     CommandParameter="Fantasia"
                      FontAttributes="Bold"
                      TextColor="Black"
                      BorderColor="Black" BorderWidth="2"
@@ -126,7 +126,7 @@
                     <Button.Triggers>
                         <DataTrigger TargetType="Button"
                               Binding="{Binding SelectedGenre}"
-                              Value="Fantasy">  
+                              Value="Fantasia">  
                             <Setter Property="BackgroundColor" Value="Black"/>
                             <Setter Property="TextColor" Value="White"/>
                         </DataTrigger>
@@ -186,7 +186,7 @@
                             </Frame>
                             <Label Text="{Binding Libro.Titulo}" FontAttributes="Bold"
                                        FontSize="18" LineBreakMode="TailTruncation" TextColor="Black" Padding="10,10,0,0" />
-                            <Label Text="{Binding Libro.Autor, StringFormat='by {0}'}"
+                            <Label Text="{Binding Libro.Autor, StringFormat='de {0}'}"
                                        FontSize="12" TextColor="#999999"  Padding="10,0,0,10" />
                             <Button
                                TextColor="White"
